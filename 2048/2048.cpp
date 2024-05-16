@@ -184,10 +184,6 @@ void init_update_map(int n) {
         {LEFT, alg_stuff(Pair(0, 0), Pair(1, 0), Pair(0, 1))},
         {RIGHT, alg_stuff(Pair(0, n - 1), Pair(1, 0), Pair(0, -1))},
     });
-
-    // for(auto [x, n]: alg_info) {
-    //     cout << char(x) << " -> start(" << n.start.i << ", " << n.start.j << ")   update(" << n.update.i << ", " << n.update.j << ")   look(" << n.look.i << ", " << n.look.j << ")" << endl;
-    // }
 }
 
 bool merge(int dir, std::vector<std::vector<int>> &board) {
@@ -208,8 +204,6 @@ bool merge_in_line(int dir, std::vector<std::vector<int>> &board, int iter, int 
     int row = iter * alg_info[dir].update.i + alg_info[dir].start.i + offset * alg_info[dir].look.i;
     int col = iter * alg_info[dir].update.j + alg_info[dir].start.j + offset * alg_info[dir].look.j;
 
-    // cout << "start at(" << row << ", " << col << "), offset: " << offset << endl;
-    // print_board(board);
     if(!in(row, 0, board.size()) || !in(row, 0, board.size())) return false;
 
     int look_row, look_col;
@@ -218,11 +212,10 @@ bool merge_in_line(int dir, std::vector<std::vector<int>> &board, int iter, int 
         look_row = row + alg_info[dir].look.i;
         look_col = col + alg_info[dir].look.j;
         while(in(look_row, 0, board.size()) && in(look_col, 0, board.size())) { // look-ahead
-            // cout << "looking to shift from (" << look_row << ", " << look_col << ") into (" << row << ", " << col << ")" << endl;
+
             if(board[look_row][look_col] != 0) { // move
                 board[row][col] = board[look_row][look_col];
                 board[look_row][look_col] = 0;
-                // cout << "moved" << endl;
                 merge_in_line(dir, board, iter, offset); // recursively call merge_in_line
                 return true;
             }
@@ -237,11 +230,10 @@ bool merge_in_line(int dir, std::vector<std::vector<int>> &board, int iter, int 
     look_row = row + alg_info[dir].look.i;
     look_col = col + alg_info[dir].look.j;
     while(in(look_row, 0, board.size()) && in(look_col, 0, board.size())) { // look-ahead
-        // cout << "looking to merge from (" << look_row << ", " << look_col << ") into (" << row << ", " << col << ")" << endl;
+
         if(board[look_row][look_col] == board[row][col]) { // matches value -> merge
             board[row][col] *= 2;
             board[look_row][look_col] = 0;
-            // cout << "merged" << endl;
             merge_in_line(dir, board, iter, 0); // recursively call merge_in_line
             return true;
         }
