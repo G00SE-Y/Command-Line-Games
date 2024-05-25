@@ -53,7 +53,7 @@ bool game_state::add_tile() {
     if(positions.size() == 0) return false;
 
     // add a new tile
-    std::uniform_int_distribution<> dist(0, board.size() - 1);
+    std::uniform_int_distribution<> dist(0, positions.size() - 1);
     Pair p = positions.at(dist(gen));
     board[p.i][p.j] = 2;
 

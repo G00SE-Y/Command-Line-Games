@@ -20,14 +20,17 @@ namespace game {
 
         void update_state(int dir, game_state& state) {
 
-            state.changed = merge(dir, state);
-            
-            if(state.changed) state.win = check_win(state);
-            else return;
+            state.changed = merge(dir, state); // make move
 
-            if(state.win == WIN || state.win == LOSE) return;
+            if(!state.changed) return; // no change occured, do nothing
 
-            state.add_tile();
+            state.win = check_win(state); // check for a win or loss
+            if(state.win != NONE) return;
+
+            state.add_tile(); // try to add a tile
+            state.win = check_win(state); // check for a win or loss
+
+            return;
         }
 
 
@@ -107,24 +110,23 @@ namespace game {
             auto& board = state.board;
             int zeros = 0;
 
-            // search for thr 2048 tile and count how many zeros are seen
-            for(auto l: board) {
-                for(auto n: l) {
-                    if(n == 2048) return WIN;
+            // search for the 2048 tile and count how many zeros are seen
+            for(auto r: board) {
+                for(auto n: r) {
+                    if(n == 16) return WIN;
                     else if(n == 0) zeros++;
                 }
             }
-
             // if zeros exist, then at least one row or column can be shifted
             if(zeros > 0) return NONE;
             
             // check for any possible merges in any direction
             for(std::size_t i = 0; i < board.size(); i++) {
                 for(std::size_t j = 0; j < board.size(); j++) {
-                    if(     in(i - 1, 0, board.size()) && in(j,     0, board.size()) && board[i][j] == board[i - 1][j    ]) return 0;
-                    else if(in(i + 1, 0, board.size()) && in(j,     0, board.size()) && board[i][j] == board[i + 1][j    ]) return 0;
-                    else if(in(i,     0, board.size()) && in(j - 1, 0, board.size()) && board[i][j] == board[i    ][j - 1]) return 0;
-                    else if(in(i,     0, board.size()) && in(j + 1, 0, board.size()) && board[i][j] == board[i    ][j + 1]) return 0;
+                    if(     in(i - 1, 0, board.size()) && in(j,     0, board.size()) && board[i][j] == board[i - 1][j    ]) return NONE;
+                    else if(in(i + 1, 0, board.size()) && in(j,     0, board.size()) && board[i][j] == board[i + 1][j    ]) return NONE;
+                    else if(in(i,     0, board.size()) && in(j - 1, 0, board.size()) && board[i][j] == board[i    ][j - 1]) return NONE;
+                    else if(in(i,     0, board.size()) && in(j + 1, 0, board.size()) && board[i][j] == board[i    ][j + 1]) return NONE;
                 }
             }
 

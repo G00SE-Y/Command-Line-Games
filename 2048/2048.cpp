@@ -7,7 +7,7 @@
 #include "2048_display.h"
 #include "2048_game_state.h"
 
-#define MIN_BOARD 4
+#define MIN_BOARD 2
 #define MAX_BOARD 20
 
 
