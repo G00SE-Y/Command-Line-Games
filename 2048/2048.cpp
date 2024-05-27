@@ -11,8 +11,8 @@
 #include "2048_game_state.h"
 #include "2048_utils.h"
 
-#define MIN_BOARD 2
-#define MAX_BOARD 6
+#define MIN_BOARD 4
+#define MAX_BOARD 4
 
 
 bool play_game(int n);
@@ -42,6 +42,8 @@ int main(int argv, char** args) {
     return 0;
 }
 
+
+
 bool play_game(int n) {
     auto state = game_state(n);
     
@@ -50,15 +52,11 @@ bool play_game(int n) {
     auto old_code_page = GetConsoleOutputCP();
     SetConsoleOutputCP(CP_UTF8);
 
-    std::cout << "Unicode character...?  " << "\u250F" << std::endl;
-
     noecho();
     curs_set(0);
+
+    display::init_board();
     display::show_board(state);
-    return false;
-    addstr(state.get_string_board().c_str());
-    move(0,0);
-    refresh();
 
     char c;
     while(state.win == NONE) {
@@ -66,10 +64,12 @@ bool play_game(int n) {
         c = tolower(c); // get input
 
         if(c == QUIT) { // exit program
+            SetConsoleOutputCP(old_code_page);
             endwin();
             return false;
         }
         else if(c == RESTART) { // restart game
+            SetConsoleOutputCP(old_code_page);
             endwin();
             return true;
         }
@@ -77,30 +77,36 @@ bool play_game(int n) {
         
         game::move(c, state); // try to perform move
 
-        if(!state.changed) continue; // no changes happened as a result of the direction given, try again
+        if(!state.changed) {
+            beep();
+            continue; // no changes happened as a result of the direction given, try again
+        }
 
-        addstr(state.get_string_board().c_str());
-        move(0,0);
-        refresh();
+        display::show_board(state);
     }
 
-    move(n + 2, 0);
     if(state.win == WIN) {
-        addstr("You Win!");
+        display::show_popup(" You Win!");
     }
     else if(state.win == LOSE) {
-        addstr("You Lose!");
+        display::show_popup("You Lose!");
     }
     else {
-        addstr("You What?!");
+        display::show_popup("You What?");
     }
-    addstr("\n\nPress any key to exit..");
-    refresh();
-    getch();
+
+
+    c = getch();
 
     SetConsoleOutputCP(old_code_page);
-
     endwin();
+
+    if(c == QUIT) { // exit program
+        return false;
+    }
+    else if(c == RESTART) { // restart game
+        return true;
+    }
 
     return false;
 }

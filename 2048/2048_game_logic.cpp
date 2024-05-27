@@ -113,7 +113,7 @@ namespace game {
             // search for the 2048 tile and count how many zeros are seen
             for(auto r: board) {
                 for(auto n: r) {
-                    if(n == 16) return WIN;
+                    if(n == WIN_VALUE) return WIN;
                     else if(n == 0) zeros++;
                 }
             }

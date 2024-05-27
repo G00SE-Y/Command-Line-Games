@@ -1,6 +1,8 @@
 #ifndef _2048_GAME_LOGIC_H
 #define _2048_GAME_LOGIC_H
 
+#define WIN_VALUE 2048
+
 #include <iostream>
 #include <string>
 #include <vector>
